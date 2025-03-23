@@ -1,118 +1,136 @@
-export function createFloorZones(scene, camera) {
-    const zones = [
-      {
-        name: 'Charging Zone',
-        color: 'yellow',
-        size: [15, 10],
-        position: [-100, -40]
-      },
-      {
-        name: 'Charging Zone',
-        color: 'yellow',
-        size: [15, 10],
-        position: [-100, 40]
-      },
-      {
-        name: 'Charging Zone',
-        color: 'yellow',
-        size: [15, 10],
-        position: [100, -40]
-      },
-      {
-        name: 'Charging Zone',
-        color: 'yellow',
-        size: [15, 10],
-        position: [100, 40]
-      },
-      {
-        name: 'Charging Zone',
-        color: 'yellow',
-        size: [15, 10],
-        position: [0, 0]
-      },
-      {
-        name: 'Reception Zone',
-        color: 0xC8E6C9,
-        size: [70, 40],
-        position: [-120, -85],
-        labelPosition: [-120, -65],
-      },
-    //   {
-    //     name: 'Unloading Zone',
-    //     color: 0xFFF9C4,
-    //     size: [100, 40],
-    //     position: [150, -80]
-    //   },
-      {
-        name: 'Placement Zone',
-        color: 0xE1BEE7,
-        size: [90, 50],
-        position: [-110, 75],
-        labelPosition: [-110, 51],
-      },
-      {
-        name: 'Storage Zone',
-        color: 0xBFEFFF,
-        size: [200, 50],
-        position: [50, 75],
-        labelPosition: [50, 51],
-      }
+export function createFloorZones(scene, camera, labelManager) {
+    const chargingPositions = [
+        [-25, -20], [-25, 20], [25, -20], [25, 20], [0, 0]
     ];
-  
-    zones.forEach(zone => {
-      const [width, depth] = zone.size;
-      const [x, z] = zone.position;
-  
-      // 바닥 zone 생성
-      const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(width, depth),
-        new THREE.MeshStandardMaterial({
-          color: zone.color,
-          transparent: true,
-          opacity: 0.85
-        })
-      );
-      floor.rotation.x = -Math.PI / 2;
-      floor.position.set(x, 0.01, z);
-      scene.add(floor);
 
-      if (zone.labelPosition === undefined) return;
-      const [labelX, labelY] = zone.labelPosition;
-      // 라벨 생성 (한 번만 위치 계산)
-      createHtmlLabel(zone.name, labelX, 5, labelY, camera);
+    const zones = [
+        ...chargingPositions.map(pos => ({
+            name: 'Charging Zone',
+            color: 'yellow',
+            size: [15, 10],
+            position: pos
+        })),
+        {
+            name: '입고 구역',
+            color: 0xC8E6C9,
+            size: [110, 100],
+            position: [-150, 50],
+            labelPosition: [-150, 50],
+        },
+        {
+            name: '출고 구역',
+            color: 0xEFBEE7,
+            size: [110, 100],
+            position: [-150, -50],
+            labelPosition: [-150, -50],
+        },
+        {
+            name: '입고 보관 구역',
+            // color: 0xBFEFFF,
+            color: 0xC8FFFF,
+            size: [150, 100],
+            position: [130, 50],
+            labelPosition: [130, 50],
+        },
+        {
+            name: '출고 보관 구역',
+            color: 0xFFEFFF,
+            size: [150, 100],
+            position: [130, -50],
+            labelPosition: [130, -50],
+        }
+    ];
+
+    zones.forEach(zone => {
+        const name = zone.name;
+        const [width, depth] = zone.size;
+        const [x, z] = zone.position;
+
+        // 바닥 zone 생성
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(width, depth),
+            new THREE.MeshStandardMaterial({
+                color: zone.color,
+                transparent: true,
+                opacity: 0.85
+            })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.set(x, 0.01, z);
+        scene.add(floor);
+
+        if (zone.labelPosition === undefined) return;
+        const [labelX, labelZ] = zone.labelPosition;
+
+        // 왼쪽 벽 + 입출고 게이트
+        createLeftWallsAndGates(scene);
+        // 라벨 추가
+        labelManager.addLabel({
+            text: name,
+            target: new THREE.Vector3(labelX, 5, labelZ)
+        });
     });
-  }
-  
-  function createHtmlLabel(text, x, y, z, camera) {
-    if (!camera) {
-      console.error('camera가 undefined입니다.');
-      return;
+
+    function createLeftWallsAndGates(scene) {
+        const wallMaterial = new THREE.MeshPhongMaterial({ color: '#B0BEC5' });
+
+        const wallHeight = 10;
+        const wallThickness = 1;
+        const wallZStart = -100;
+        const wallZEnd = 100;
+        const gateCount = 6;
+        const totalHeight = wallZEnd - wallZStart; // 200
+        const gateSection = totalHeight / gateCount; // 각 게이트 섹션: 약 33.33
+        const gateHeight = 20; // 게이트 실제 높이 (z축 방향)
+
+        for (let i = 0; i < gateCount; i++) {
+            const sectionStart = wallZStart + i * gateSection;
+            let sectionCenter = sectionStart + gateSection / 2;
+
+            const isInbound = i >= 3;
+            const gateColor = isInbound ? 0x00ff00 : 0xff0000;
+
+            const gate = new THREE.Mesh(
+                new THREE.BoxGeometry(wallThickness, 2, gateHeight),
+                new THREE.MeshBasicMaterial({ color: gateColor })
+            );
+            gate.position.set(-200, 1, sectionCenter);
+            scene.add(gate);
+
+            const gateNumber = isInbound
+                ? gateCount - i               // 하단 3개 (3~1번)
+                : i + 1;                      // 상단 3개 (4~6번)
+
+            const labelText = isInbound
+                ? `입고 ${gateNumber}`
+                : `출고 ${gateNumber}`;
+
+            const labelOffsetZ = isInbound ? -gateHeight / 2 + 12 : gateHeight / 2 - 8;
+            const labelPosition = new THREE.Vector3(-200, 5, sectionCenter + labelOffsetZ);
+
+            labelManager.addLabel({
+                text: labelText,
+                target: labelPosition,
+                rotate: -90
+            });
+
+            // 상단 벽
+            const topWallHeight = (gateSection - gateHeight) / 2;
+            if (topWallHeight > 0) {
+                const topWall = new THREE.Mesh(
+                    new THREE.BoxGeometry(wallThickness, wallHeight, topWallHeight),
+                    wallMaterial
+                );
+                topWall.position.set(-200, wallHeight / 2, sectionCenter - gateHeight / 2 - topWallHeight / 2);
+                scene.add(topWall);
+
+                const bottomWall = new THREE.Mesh(
+                    new THREE.BoxGeometry(wallThickness, wallHeight, topWallHeight),
+                    wallMaterial
+                );
+                bottomWall.position.set(-200, wallHeight / 2, sectionCenter + gateHeight / 2 + topWallHeight / 2);
+                scene.add(bottomWall);
+            }
+        }
     }
-  
-    camera.updateMatrixWorld();
-    camera.updateProjectionMatrix();
-  
-    const div = document.createElement('div');
-    div.textContent = text;
-    div.style.position = 'absolute';
-    div.style.backgroundColor = '#ffffffcc';
-    div.style.padding = '4px 8px';
-    div.style.borderRadius = '4px';
-    div.style.fontSize = '14px';
-    div.style.fontWeight = 'bold';
-    div.style.color = '#000';
-    div.style.pointerEvents = 'none';
-    div.style.zIndex = '15';
-    div.style.transform = 'translate(-50%, -50%)'; // 중앙 정렬
-  
-    // 🎯 정확한 3D → 2D 위치 변환
-    const vector = new THREE.Vector3(x, y, z).project(camera);
-    const screenX = (vector.x + 1) / 2 * window.innerWidth;
-    const screenY = (-vector.y + 1) / 2 * window.innerHeight;
-  
-    div.style.left = `${screenX}px`;
-    div.style.top = `${screenY }px`;
-  
-    document.body.appendChild(div);
 }
-  

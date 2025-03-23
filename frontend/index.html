@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>스마트 물류창고</title>
 
     <script src="https://unpkg.com/three@0.155.0/build/three.min.js"></script>
 
@@ -11,51 +12,55 @@
     <script type="module" src="./main.js"></script>
     <script src="./kiosk/kiosk-ui.js" defer></script>
 </head>
+
 <body>
-    <button id="orderBtn" style="position:absolute; top:20px; right:20px; z-index:20; padding:10px 16px; background:#ffcc00; border:none; font-weight:bold;">🍔 주문하기</button>
+    <button id="orderBtn"
+        style="position:absolute; top:20px; right:20px; z-index:20; padding:10px 16px; background:#ffcc00; border:none; font-weight:bold;">🤖
+        로봇 추가</button>
 
     <div id="kiosk" class="kiosk">
-      <h2>🍟 맥도날드 키오스크</h2>
-      <div class="menu-item" data-name="감자튀김" data-price="2000">
-        <div class="menu-info">
-          <strong>감자튀김</strong> - 2,000원
+        <h2>🍟 맥도날드 키오스크</h2>
+        <div class="menu-item" data-name="감자튀김" data-price="2000">
+            <div class="menu-info">
+                <strong>감자튀김</strong> - 2,000원
+            </div>
+            <div class="controls">
+                <button onclick="decrease(this)">-</button>
+                <span class="qty">0</span>
+                <button onclick="increase(this)">+</button>
+            </div>
         </div>
-        <div class="controls">
-          <button onclick="decrease(this)">-</button>
-          <span class="qty">0</span>
-          <button onclick="increase(this)">+</button>
+
+        <div class="menu-item" data-name="햄버거" data-price="3500">
+            <div class="menu-info">
+                <strong>햄버거</strong> - 3,500원
+            </div>
+            <div class="controls">
+                <button onclick="decrease(this)">-</button>
+                <span class="qty">0</span>
+                <button onclick="increase(this)">+</button>
+            </div>
         </div>
-      </div>
-  
-      <div class="menu-item" data-name="햄버거" data-price="3500">
-        <div class="menu-info">
-          <strong>햄버거</strong> - 3,500원
+
+        <div class="menu-item" data-name="콜라" data-price="1500">
+            <div class="menu-info">
+                <strong>콜라</strong> - 1,500원
+            </div>
+            <div class="controls">
+                <button onclick="decrease(this)">-</button>
+                <span class="qty">0</span>
+                <button onclick="increase(this)">+</button>
+            </div>
         </div>
-        <div class="controls">
-          <button onclick="decrease(this)">-</button>
-          <span class="qty">0</span>
-          <button onclick="increase(this)">+</button>
+
+        <div class="total">
+            총 가격: <span id="totalPrice">0</span>원
         </div>
-      </div>
-  
-      <div class="menu-item" data-name="콜라" data-price="1500">
-        <div class="menu-info">
-          <strong>콜라</strong> - 1,500원
-        </div>
-        <div class="controls">
-          <button onclick="decrease(this)">-</button>
-          <span class="qty">0</span>
-          <button onclick="increase(this)">+</button>
-        </div>
-      </div>
-  
-      <div class="total">
-        총 가격: <span id="totalPrice">0</span>원
-      </div>
-  
-      <button class="cancel-btn" onclick="confirmOrder()">✅ 초기화</button>
-    
-      <button class="confirm-btn" onclick="confirmOrder()">✅ 주문 완료</button>
+
+        <button class="cancel-btn" onclick="confirmOrder()">✅ 초기화</button>
+
+        <button class="confirm-btn" onclick="confirmOrder()">✅ 주문 완료</button>
     </div>
 </body>
+
 </html>
