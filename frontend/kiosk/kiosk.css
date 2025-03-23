@@ -1,0 +1,52 @@
+body { margin: 0; font-family: sans-serif; background: #f4f4f4; }
+    .kiosk {
+      width: 400px;
+      position: absolute;
+      top: 70px;
+      right: 0px;
+      transition: right 0.4s ease;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      z-index: 10;
+      visibility: hidden;
+    }
+    .kiosk.open {
+        visibility: visible;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+    .menu-info {
+      flex-grow: 1;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .controls button {
+      width: 30px;
+      height: 30px;
+    }
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+.confirm-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #ffcc00;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+}
