@@ -1,0 +1,38 @@
+#simulator-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  font-family: Arial, sans-serif;
+}
+
+#robot-list, #robot-info, #robot-queue {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  margin: 5px;
+  pointer-events: all;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#robot-list {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 180px;
+}
+
+#robot-info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 220px;
+}
+
+#robot-queue {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 220px;
+}
