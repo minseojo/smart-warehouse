@@ -1,4 +1,3 @@
-// robots-gui.js
 import GUI from 'lil-gui';
 
 export class RobotsGUI {

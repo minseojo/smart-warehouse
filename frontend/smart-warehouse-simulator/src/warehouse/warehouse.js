@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import * as THREE from 'three'
+import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 export function fetchWarehouseData(scene) {
     return fetch('http://localhost:8080/api/warehouses/1')
