@@ -1,7 +1,10 @@
 package com.minseojo.smartwarehouse.robot.domain;
 
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
-import com.minseojo.smartwarehouse.common.vo.*;
+import com.minseojo.smartwarehouse.common.vo.OBB;
+import com.minseojo.smartwarehouse.common.vo.Position;
+import com.minseojo.smartwarehouse.common.vo.Quaternion;
+import com.minseojo.smartwarehouse.common.vo.Size;
 import com.minseojo.smartwarehouse.device.DeviceType;
 import jakarta.persistence.*;
 import lombok.*;
