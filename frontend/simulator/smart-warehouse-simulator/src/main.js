@@ -1,140 +1,71 @@
-// ✅ 스마트 물류창고 시뮬레이터 - 서버 연동 + 기존 모듈 연계 완전판
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { createFloorZones } from './zone/zone.js';
-import { LabelManager } from './utils/labelManager';
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer';
 
-// --- Interface ---
-class SimulationData {
-    /** @type {RobotData[]} */ robots = [];
-    /** @type {string[]} */ queue = [];
+import { fetchWarehouseData } from './warehouse/warehouse.js';
+
+// 3D 씬 설정
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const labelRenderer = new CSS2DRenderer();
+
+// renderer
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.display = 'block';
+renderer.domElement.style.position = 'absolute';
+renderer.domElement.style.top = '0';
+renderer.domElement.style.left = '0';
+renderer.domElement.style.width = '100%';
+renderer.domElement.style.height = '100%';
+document.body.appendChild(renderer.domElement);
+
+// CSS2DRenderer
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.width = '100%';
+labelRenderer.domElement.style.height = '100%';
+labelRenderer.domElement.style.margin = '0';
+labelRenderer.domElement.style.padding = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+labelRenderer.domElement.style.display = 'block';
+document.body.appendChild(labelRenderer.domElement);
+
+// 카메라 설정
+camera.position.set(0, 560, 0);
+camera.lookAt(0, 0, 0);
+
+// 조명 설정
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+const light = new THREE.DirectionalLight(0xffffff, 0.8);
+light.position.set(10, 20, 10);
+scene.add(light);
+
+// OrbitControls로 씬 조작
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableDamping = true;
+// controls.dampingFactor = 0.05;
+// controls.enableZoom = false;     // 줌 막기
+// controls.enablePan = false;      // 패닝 막기
+// controls.enableRotate = false;   // 회전 막기
+//
+// controls.update();
+
+
+// 애니메이션 루프
+function animate() {
+    requestAnimationFrame(animate);
+    // controls.update();
+    renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
 }
 
-class RobotData {
-    /** @type {string} */ id;
-    /** @type {'Idle' | 'Moving' | 'Charging' | 'Waiting'} */ state;
-    /** @type {{x: number, y: number}} */ position;
-    /** @type {number} */ speed;
-    /** @type {number} */ battery;
-}
+animate();
 
-// --- Visualizer ---
-class Visualizer {
-    constructor() {
-        // Scene Setup
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-canvas') });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-        // Controls
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.enableDamping = true;
-
-        // Label Manager
-        this.labelManager = new LabelManager(this.camera);
-
-        // Floor Zones
-        createFloorZones(this.scene, this.camera, this.labelManager);
-
-        // Robot Mesh & Label
-        this.robotMeshes = {};  // { [id]: Mesh }
-        this.robotLabels = {};  // { [id]: HTMLDivElement }
-
-        // Camera
-        this.camera.position.set(0, 50, 50);
-        this.camera.lookAt(0, 0, 0);
-
-        // Animate
-        this.animate();
-    }
-
-    update(simulationData) {
-        this.updateRobotList(simulationData.robots);
-        this.updateQueue(simulationData.queue);
-        this.update3DScene(simulationData);
-        this.labelManager.updateAll();
-    }
-
-    updateRobotList(robots) {
-        const list = document.getElementById('robot-items');
-        list.innerHTML = '';
-        robots.forEach(r => {
-            const li = document.createElement('li');
-            li.textContent = `${r.id} (${r.state}) Battery: ${r.battery}%`;
-            list.appendChild(li);
-        });
-    }
-
-    updateQueue(queue) {
-        const q = document.getElementById('queue-items');
-        q.innerHTML = '';
-        queue.forEach(id => {
-            const li = document.createElement('li');
-            li.textContent = id;
-            q.appendChild(li);
-        });
-    }
-
-    update3DScene(data) {
-        data.robots.forEach((robot, idx) => {
-            // Mesh 생성
-            if (!this.robotMeshes[robot.id]) {
-                const geometry = new THREE.BoxGeometry(1, 1, 1);
-                const material = new THREE.MeshStandardMaterial();
-                const mesh = new THREE.Mesh(geometry, material);
-                this.scene.add(mesh);
-                this.robotMeshes[robot.id] = mesh;
-
-                // Label 생성 (기존 LabelManager 사용)
-                const label = this.labelManager.addLabel({
-                    text: robot.id,
-                    target: mesh,
-                    getText: () => `${robot.id} (${robot.state})`
-                });
-                this.robotLabels[robot.id] = label;
-            }
-
-            // Queue에 있으면 대기열 위치로
-            const mesh = this.robotMeshes[robot.id];
-            if (data.queue.includes(robot.id)) {
-                const qIndex = data.queue.indexOf(robot.id);
-                mesh.position.set(-20 + qIndex * 2, 0.5, -20);
-            } else {
-                mesh.position.set(robot.position.x, 0.5, robot.position.y);
-            }
-
-            // 색상
-            mesh.material.color.set(this.getColorByState(robot.state));
-        });
-    }
-
-    getColorByState(state) {
-        switch (state) {
-            case 'Idle': return 'gray';
-            case 'Moving': return 'blue';
-            case 'Charging': return 'yellow';
-            case 'Waiting': return 'orange';
-            default: return 'white';
-        }
-    }
-
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        this.controls.update();
-        this.renderer.render(this.scene, this.camera);
-    }
-}
-
-// --- Real-time Data Receiver ---
-const visualizer = new Visualizer();
-
-function receiveFromServer(data) {
-    visualizer.update(data);
-}
-
-// 예시: 서버에서 아래처럼 호출한다고 가정
-// receiveFromServer(simulationData)
-
-export { receiveFromServer }
+// 페이지 로드 후 데이터를 불러옵니다.
+window.addEventListener('DOMContentLoaded', () => {
+    fetchWarehouseData(scene);
+    animate();
+});
