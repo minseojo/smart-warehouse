@@ -1,0 +1,50 @@
+package com.minseojo.smartwarehouse.zone.domain;
+
+import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
+import com.minseojo.smartwarehouse.common.vo.LocatedObject;
+import com.minseojo.smartwarehouse.common.vo.Position;
+import com.minseojo.smartwarehouse.common.vo.Quaternion;
+import com.minseojo.smartwarehouse.common.vo.Size;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@Builder
+@Getter
+public class Zone extends BaseTimeEntity implements LocatedObject {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String description;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "x", column = @Column(name = "position_x")),
+            @AttributeOverride(name = "y", column = @Column(name = "position_y")),
+            @AttributeOverride(name = "z", column = @Column(name = "position_z"))
+    })
+    private Position position;
+
+    @Embedded
+    private Size size;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "x", column = @Column(name = "rotation_x")),
+            @AttributeOverride(name = "y", column = @Column(name = "rotation_y")),
+            @AttributeOverride(name = "z", column = @Column(name = "rotation_z")),
+            @AttributeOverride(name = "w", column = @Column(name = "rotation_w"))
+    })
+    private Quaternion rotation;
+
+    @Enumerated(EnumType.STRING)
+    private ZoneType type;
+
+    private Long warehouseId; // 약한 연관 (FK)
+
+}
