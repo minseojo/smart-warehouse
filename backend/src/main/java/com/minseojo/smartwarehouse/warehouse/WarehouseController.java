@@ -2,8 +2,10 @@ package com.minseojo.smartwarehouse.warehouse;
 
 import com.minseojo.smartwarehouse.warehouse.dto.CreateWarehouseRequest;
 import com.minseojo.smartwarehouse.warehouse.dto.UpdateWarehouseRequest;
+import com.minseojo.smartwarehouse.warehouse.dto.WarehouseAggregateResponse;
 import com.minseojo.smartwarehouse.warehouse.dto.WarehouseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +23,8 @@ public class WarehouseController {
     }
 
     @GetMapping("/{id}")
-    public WarehouseResponse getById(@PathVariable Long id) {
-        return warehouseService.getById(id);
+    public ResponseEntity<WarehouseAggregateResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(warehouseService.getById(id));
     }
 
     @GetMapping

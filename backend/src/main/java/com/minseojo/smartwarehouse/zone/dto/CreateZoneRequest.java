@@ -1,5 +1,6 @@
 package com.minseojo.smartwarehouse.zone.dto;
 
+import com.minseojo.smartwarehouse.common.vo.Color;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
@@ -17,5 +18,6 @@ public class CreateZoneRequest {
     private Size size;
     private Quaternion rotation;
     private ZoneType type;
+    private Color color;
     private Long warehouseId;
 }

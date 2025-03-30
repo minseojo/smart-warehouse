@@ -6,6 +6,7 @@ import com.minseojo.smartwarehouse.common.vo.Size;
 import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
 import com.minseojo.smartwarehouse.warehouse.dto.CreateWarehouseRequest;
 import com.minseojo.smartwarehouse.warehouse.dto.UpdateWarehouseRequest;
+import com.minseojo.smartwarehouse.warehouse.dto.WarehouseAggregateResponse;
 import com.minseojo.smartwarehouse.warehouse.dto.WarehouseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,9 @@ public class WarehouseService {
     }
 
     @Transactional(readOnly = true)
-    public WarehouseResponse getById(Long id) {
+    public WarehouseAggregateResponse getById(Long id) {
         Warehouse warehouse = getByIdOrThrow(id);
-        return WarehouseResponse.from(warehouse);
+        return WarehouseAggregateResponse.from(warehouse);
     }
 
     @Transactional(readOnly = true)
@@ -60,9 +61,9 @@ public class WarehouseService {
         warehouse.update(
                 dto.getName(),
                 dto.getDescription(),
-                Position.of(dto.getPosition()),
-                Quaternion.of(dto.getRotation()),
-                Size.of(dto.getSize())
+                dto.getPosition(),
+                dto.getRotation(),
+                dto.getSize()
         );
 
         return WarehouseResponse.from(warehouse);

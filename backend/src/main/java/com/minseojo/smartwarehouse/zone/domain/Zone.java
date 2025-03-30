@@ -1,10 +1,9 @@
 package com.minseojo.smartwarehouse.zone.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
-import com.minseojo.smartwarehouse.common.vo.LocatedObject;
-import com.minseojo.smartwarehouse.common.vo.Position;
-import com.minseojo.smartwarehouse.common.vo.Quaternion;
-import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.common.vo.*;
+import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,6 +44,33 @@ public class Zone extends BaseTimeEntity implements LocatedObject {
     @Enumerated(EnumType.STRING)
     private ZoneType type;
 
-    private Long warehouseId; // 약한 연관 (FK)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Color color = Color.RED; // 기본 컬러 설정
 
+    // Write 용 단방향
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id")
+    @JsonBackReference // 혹은 DTO에서 무시
+    private Warehouse warehouse;
+
+    public void update(
+            String name,
+            String description,
+            Position position,
+            Size size,
+            Quaternion rotation,
+            ZoneType type,
+            Color color,
+            Warehouse warehouse
+    ) {
+        this.name = name;
+        this.description = description;
+        this.position = position;
+        this.size = size;
+        this.rotation = rotation;
+        this.type = type;
+        this.color = color;
+        this.warehouse = warehouse;
+    }
 }

@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/zones")
 @RequiredArgsConstructor
@@ -16,24 +14,16 @@ public class ZoneController {
 
     private final ZoneService zoneService;
 
+
     @PostMapping
-    public ZoneResponse create(@RequestBody CreateZoneRequest dto) {
-        return zoneService.create(dto);
-    }
-
-    @GetMapping("/{id}")
-    public ZoneResponse getById(@PathVariable Long id) {
-        return zoneService.getById(id);
-    }
-
-    @GetMapping
-    public List<ZoneResponse> getAll() {
-        return zoneService.getAll();
+    public ZoneResponse create(@RequestParam Long warehouseId, @RequestBody CreateZoneRequest requestDTO) {
+        return zoneService.create(warehouseId, requestDTO);
     }
 
     @PutMapping("/{id}")
-    public ZoneResponse update(@PathVariable Long id, @RequestBody UpdateZoneRequest dto) {
-        return zoneService.update(id, dto);
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestParam Long warehouseId, @RequestBody UpdateZoneRequest dto) {
+        zoneService.update(id, warehouseId, dto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
@@ -41,4 +31,5 @@ public class ZoneController {
         zoneService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

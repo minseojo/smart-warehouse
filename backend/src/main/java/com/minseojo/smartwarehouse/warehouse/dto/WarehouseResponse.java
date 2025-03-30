@@ -10,7 +10,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class WarehouseResponse {
-    private Long id;
     private String name;
     private String description;
     private Position position;
@@ -19,7 +18,6 @@ public class WarehouseResponse {
 
     public static WarehouseResponse from(Warehouse warehouse) {
         return WarehouseResponse.builder()
-                .id(warehouse.getId())
                 .name(warehouse.getName())
                 .description(warehouse.getDescription())
                 .position(Position.of(warehouse.getPosition()))

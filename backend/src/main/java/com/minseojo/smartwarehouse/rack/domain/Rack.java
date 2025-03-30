@@ -48,4 +48,14 @@ public class Rack extends BaseTimeEntity {
     @JoinColumn(name = "zone_id")
     private Zone zone; // 단방향만 설정
 
+    public void update(String name, String description,
+                       Position position, Size size, Quaternion rotation,
+                       Zone zone) {
+        this.name = name;
+        this.description = description;
+        this.position = position;
+        this.size = size;
+        this.rotation = rotation;
+        this.zone = zone;
+    }
 }

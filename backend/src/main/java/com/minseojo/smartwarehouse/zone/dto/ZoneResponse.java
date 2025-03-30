@@ -19,7 +19,7 @@ public class ZoneResponse {
     private Size size;
     private Quaternion rotation;
     private ZoneType type;
-    private Long warehouseId;
+    private String color;
 
     public static ZoneResponse from(Zone zone) {
         return ZoneResponse.builder()
@@ -30,7 +30,7 @@ public class ZoneResponse {
                 .size(zone.getSize())
                 .rotation(zone.getRotation())
                 .type(zone.getType())
-                .warehouseId(zone.getWarehouseId())
+                .color(zone.getColor().getHex())
                 .build();
     }
 }

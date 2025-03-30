@@ -4,8 +4,8 @@ import com.minseojo.smartwarehouse.rack.domain.Rack;
 import com.minseojo.smartwarehouse.rack.dto.CreateRackRequest;
 import com.minseojo.smartwarehouse.rack.dto.RackResponse;
 import com.minseojo.smartwarehouse.rack.dto.UpdateRackRequest;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
 import com.minseojo.smartwarehouse.zone.ZoneRepository;
+import com.minseojo.smartwarehouse.zone.domain.Zone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,15 +57,14 @@ public class RackService {
     public RackResponse update(Long id, UpdateRackRequest dto) {
         Rack rack = getByIdOrThrow(id);
 
-        rack = Rack.builder()
-                .id(rack.getId())
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .position(dto.getPosition())
-                .size(dto.getSize())
-                .rotation(dto.getRotation())
-                .zone(rack.getZone())
-                .build();
+        rack.update(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getPosition(),
+                dto.getSize(),
+                dto.getRotation(),
+                rack.getZone()
+        );
 
         return RackResponse.from(rackRepository.save(rack));
     }

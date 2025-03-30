@@ -1,14 +1,15 @@
 package com.minseojo.smartwarehouse.zone;
 
+import com.minseojo.smartwarehouse.warehouse.WarehouseRepository;
+import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
 import com.minseojo.smartwarehouse.zone.domain.Zone;
 import com.minseojo.smartwarehouse.zone.dto.CreateZoneRequest;
 import com.minseojo.smartwarehouse.zone.dto.UpdateZoneRequest;
 import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -16,26 +17,18 @@ import java.util.List;
 public class ZoneService {
 
     private final ZoneRepository zoneRepository;
+    private final WarehouseRepository warehouseRepository;
 
     @Transactional(readOnly = true)
     public Zone getByIdOrThrow(Long id) {
         return zoneRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Zone not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Zone not found: " + id));
     }
 
-    @Transactional(readOnly = true)
-    public ZoneResponse getById(Long id) {
-        return ZoneResponse.from(getByIdOrThrow(id));
-    }
+    public ZoneResponse create(Long warehouseId, CreateZoneRequest dto) {
+        Warehouse warehouse = warehouseRepository.findById(warehouseId)
+                .orElseThrow(() -> new EntityNotFoundException("Warehouse not found"));
 
-    @Transactional(readOnly = true)
-    public List<ZoneResponse> getAll() {
-        return zoneRepository.findAll().stream()
-                .map(ZoneResponse::from)
-                .toList();
-    }
-
-    public ZoneResponse create(CreateZoneRequest dto) {
         Zone zone = Zone.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -43,25 +36,29 @@ public class ZoneService {
                 .size(dto.getSize())
                 .rotation(dto.getRotation())
                 .type(dto.getType())
-                .warehouseId(dto.getWarehouseId())
+                .warehouse(warehouse)
                 .build();
 
         Zone saved = zoneRepository.save(zone);
         return ZoneResponse.from(saved);
     }
 
-    public ZoneResponse update(Long id, UpdateZoneRequest dto) {
+    public ZoneResponse update(Long id, Long warehouseId, UpdateZoneRequest dto) {
+        Warehouse warehouse = warehouseRepository.findById(warehouseId)
+                .orElseThrow(() -> new EntityNotFoundException("Warehouse not found"));
+
         Zone zone = getByIdOrThrow(id);
-        zone = Zone.builder()
-                .id(zone.getId()) // 기존 ID 유지
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .position(dto.getPosition())
-                .size(dto.getSize())
-                .rotation(dto.getRotation())
-                .type(dto.getType())
-                .warehouseId(zone.getWarehouseId()) // FK 유지
-                .build();
+
+        zone.update(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getPosition(),
+                dto.getSize(),
+                dto.getRotation(),
+                dto.getType(),
+                dto.getColor(),
+                warehouse
+        );
 
         return ZoneResponse.from(zoneRepository.save(zone));
     }
@@ -69,4 +66,5 @@ public class ZoneService {
     public void delete(Long id) {
         zoneRepository.delete(getByIdOrThrow(id));
     }
+
 }
