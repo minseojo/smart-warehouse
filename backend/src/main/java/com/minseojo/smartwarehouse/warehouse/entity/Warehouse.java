@@ -6,6 +6,7 @@ import com.minseojo.smartwarehouse.common.vo.LocatedObject;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.rack.entity.Rack;
 import com.minseojo.smartwarehouse.wall.entity.Wall;
 import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
@@ -51,12 +52,16 @@ public class Warehouse extends BaseTimeEntity implements LocatedObject {
 
     // === Read 전용 양방향 ===
     @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Wall> walls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     @JsonManagedReference // 또는 DTO에서만 쓰기
     private List<Zone> zones = new ArrayList<>();
 
     @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<Wall> walls = new ArrayList<>();
+    private List<Rack> racks = new ArrayList<>();
 
     public void update(String name, String description, Position position,
                        Quaternion rotation, Size size) {

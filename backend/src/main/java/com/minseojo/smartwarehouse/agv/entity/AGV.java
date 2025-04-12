@@ -1,6 +1,7 @@
-package com.minseojo.smartwarehouse.robot.entity;
+package com.minseojo.smartwarehouse.agv.entity;
 
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
+import com.minseojo.smartwarehouse.common.entity.RobotInterface;
 import com.minseojo.smartwarehouse.common.vo.OBB;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
@@ -14,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Getter
-public class Robot extends BaseTimeEntity {
+public class AGV extends BaseTimeEntity implements RobotInterface {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,13 +48,13 @@ public class Robot extends BaseTimeEntity {
     private double speed;
 
     @Enumerated(EnumType.STRING)
-    private RobotStatus status;
+    private AGVStatus status;
 
     @Enumerated(EnumType.STRING)
-    private RobotMode mode;
+    private AGVMode mode;
 
     @Enumerated(EnumType.STRING)
-    private DeviceType deviceType = DeviceType.ROBOT;
+    private DeviceType deviceType = DeviceType.AGV;
 
     private Long warehouseId;  // 약한 연관 (FK만)
 
@@ -72,6 +73,11 @@ public class Robot extends BaseTimeEntity {
     public void move(Position newPosition) {
         this.position = newPosition;
         updateOBB();
+    }
+
+    @Override
+    public double getBatteryPercentage() {
+        return batteryPercentage;
     }
 
     // 회전 변경
@@ -93,7 +99,7 @@ public class Robot extends BaseTimeEntity {
 
     public void update(String name, double battery, double speed,
                        Position pos, Quaternion rot, Size size,
-                       RobotStatus status, RobotMode mode) {
+                       AGVStatus status, AGVMode mode) {
         this.name = name;
         this.batteryPercentage = battery;
         this.speed = speed;

@@ -1,15 +1,15 @@
-package com.minseojo.smartwarehouse.robot;
+package com.minseojo.smartwarehouse.agv;
 
+import com.minseojo.smartwarehouse.agv.entity.AGV;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
 import com.minseojo.smartwarehouse.device.DeviceType;
-import com.minseojo.smartwarehouse.robot.entity.Robot;
-import com.minseojo.smartwarehouse.robot.entity.RobotMode;
-import com.minseojo.smartwarehouse.robot.entity.RobotStatus;
-import com.minseojo.smartwarehouse.robot.dto.CreateRobotRequest;
-import com.minseojo.smartwarehouse.robot.dto.RobotResponse;
-import com.minseojo.smartwarehouse.robot.dto.UpdateRobotRequest;
+import com.minseojo.smartwarehouse.agv.entity.AGVMode;
+import com.minseojo.smartwarehouse.agv.entity.AGVStatus;
+import com.minseojo.smartwarehouse.agv.dto.CreateAGVRequest;
+import com.minseojo.smartwarehouse.agv.dto.AGVResponse;
+import com.minseojo.smartwarehouse.agv.dto.UpdateAGVRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,50 +19,50 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class RobotService {
+public class AGVService {
 
-    private final RobotRepository robotRepository;
+    private final AGVRepository AGVRepository;
 
     @Transactional(readOnly = true)
-    public Robot getByIdOrThrow(Long id) {
-        return robotRepository.findById(id)
+    public AGV getByIdOrThrow(Long id) {
+        return AGVRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Robot not found: " + id));
     }
 
     @Transactional(readOnly = true)
-    public List<RobotResponse> getRobotsByWarehouse(Long warehouseId) {
-        return robotRepository.findByWarehouseId(warehouseId)
+    public List<AGVResponse> getAGVsByWarehouse(Long warehouseId) {
+        return AGVRepository.findByWarehouseId(warehouseId)
                 .stream()
-                .map(RobotResponse::from)
+                .map(AGVResponse::from)
                 .toList();
     }
 
     // 로봇 생성
-    public RobotResponse createRobot(CreateRobotRequest dto) {
-        Robot robot = Robot.builder()
+    public AGVResponse createAGV(CreateAGVRequest dto) {
+        AGV agv = AGV.builder()
                 .name(dto.getName())
                 .batteryPercentage(dto.getBatteryPercentage())
                 .speed(dto.getSpeed())
                 .position(Position.of(dto.getPosition()))
                 .rotation(Quaternion.of(dto.getRotation()))
                 .size(Size.of(dto.getSize()))
-                .status(RobotStatus.IDLE)           // 기본값 설정
-                .mode(RobotMode.NORMAL)             // 기본값 설정
-                .deviceType(DeviceType.ROBOT)       // 기본값 설정
+                .status(AGVStatus.IDLE)           // 기본값 설정
+                .mode(AGVMode.NORMAL)             // 기본값 설정
+                .deviceType(DeviceType.AGV)       // 기본값 설정
                 .warehouseId(dto.getWarehouseId())  // FK 설정
                 .build();
 
-        Robot savedRobot = robotRepository.save(robot);
+        AGV savedAGV = AGVRepository.save(agv);
 
-        return RobotResponse.from(savedRobot);
+        return AGVResponse.from(savedAGV);
     }
 
     // 로봇 수정
-    public RobotResponse updateRobot(Long id, UpdateRobotRequest dto) {
-        Robot robot = getByIdOrThrow(id);
+    public AGVResponse updateAGV(Long id, UpdateAGVRequest dto) {
+        AGV AGV = getByIdOrThrow(id);
 
         try {
-            robot.update(
+            AGV.update(
                     dto.getName(),
                     dto.getBatteryPercentage(),
                     dto.getSpeed(),
@@ -78,12 +78,12 @@ public class RobotService {
             throw new RuntimeException("Invalid status or mode value: " + e.getMessage());
         }
 
-        return RobotResponse.from(robot);
+        return AGVResponse.from(AGV);
     }
 
     // 로봇 삭제
-    public void deleteRobot(Long id) {
-        robotRepository.delete(getByIdOrThrow(id));
+    public void deleteAGV(Long id) {
+        AGVRepository.delete(getByIdOrThrow(id));
     }
 
 }

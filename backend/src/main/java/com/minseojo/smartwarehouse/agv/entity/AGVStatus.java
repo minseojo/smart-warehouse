@@ -1,11 +1,11 @@
-package com.minseojo.smartwarehouse.robot.entity;
+package com.minseojo.smartwarehouse.agv.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum RobotStatus {
+public enum AGVStatus {
     IDLE("Idle"),
     MOVING("Moving"),
     CHARGING("Charging"),

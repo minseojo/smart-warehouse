@@ -4,6 +4,8 @@ import com.minseojo.smartwarehouse.common.vo.Color;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.rack.RackRepository;
+import com.minseojo.smartwarehouse.rack.entity.Rack;
 import com.minseojo.smartwarehouse.wall.WallRepository;
 import com.minseojo.smartwarehouse.wall.entity.Wall;
 import com.minseojo.smartwarehouse.warehouse.WarehouseRepository;
@@ -22,11 +24,13 @@ public class DataInitializer implements CommandLineRunner {
     private final WarehouseRepository warehouseRepository;
     private final ZoneRepository zoneRepository;
     private final WallRepository wallRepository;
+    private final RackRepository rackRepository;
 
     @Override
     public void run(String... args) throws Exception {
         int START_X = 0;
         int START_Y = 0;
+        int START_Z = 0;
 
         int WALL_SIDE_WIDTH = 700;            // 좌우 벽 길이 (Z 방향)
         int WALL_HEIGHT = 100;                // 벽 높이 (Y 방향)
@@ -41,7 +45,7 @@ public class DataInitializer implements CommandLineRunner {
         Warehouse warehouse = Warehouse.builder()
                 .name("민서의 스마트 물류 창고")
                 .description("민서의 메인 스마트 물류 창고")
-                .position(new Position(START_X, START_Y, 0)) // 좌표 예시
+                .position(new Position(START_X, START_Y, START_Z)) // 좌표 예시
                 .size(new Size(400, 200, 10))   // 크기 (가로, 세로, 높이)
                 .rotation(Quaternion.identity()) // 회전 (기본값)
                 .build();
@@ -53,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
         zoneRepository.save(Zone.builder()
                 .name("입고 구역")
                 .description("입고를 위한 구역")
-                .position(new Position(START_X - 500, START_Y, 0))
+                .position(new Position(START_X - 500, START_Y, START_Z))
                 .size(new Size(200, ZONE_HEIGHT, 1))
                 .rotation(Quaternion.identity())
                 .type(ZoneType.INBOUND)
@@ -64,7 +68,7 @@ public class DataInitializer implements CommandLineRunner {
         zoneRepository.save(Zone.builder()
                 .name("입고 보관 구역")
                 .description("입고된 물품을 보관하는 구역")
-                .position(new Position(START_X - 250, START_Y, 0))
+                .position(new Position(START_X - 250, START_Y, START_Z))
                 .size(new Size(300, ZONE_HEIGHT, 1))
                 .rotation(Quaternion.identity())
                 .type(ZoneType.INBOUND_STORAGE)
@@ -75,7 +79,7 @@ public class DataInitializer implements CommandLineRunner {
         zoneRepository.save(Zone.builder()
                 .name("작업 구역")
                 .description("작업을 위한 구역")
-                .position(new Position(START_X +-0, START_Y + 0, 0))
+                .position(new Position(START_X, START_Y, START_Z))
                 .size(new Size(200, ZONE_HEIGHT, 1))
                 .rotation(Quaternion.identity())
                 .type(ZoneType.OUTBOUND)
@@ -86,7 +90,7 @@ public class DataInitializer implements CommandLineRunner {
         zoneRepository.save(Zone.builder()
                 .name("출고 보관 구역")
                 .description("출고 준비가 된 물품을 보관하는 구역")
-                .position(new Position(START_X + 250, START_Y, 0))
+                .position(new Position(START_X + 250, START_Y, START_Z))
                 .size(new Size(300, ZONE_HEIGHT, 1))
                 .rotation(Quaternion.identity())
                 .type(ZoneType.OUTBOUND_STORAGE)
@@ -97,7 +101,7 @@ public class DataInitializer implements CommandLineRunner {
         zoneRepository.save(Zone.builder()
                 .name("출고 구역")
                 .description("출고를 위한 구역")
-                .position(new Position(START_X + 500, START_Y, 0))
+                .position(new Position(START_X + 500, START_Y, START_Z))
                 .size(new Size(200, ZONE_HEIGHT, 1))
                 .rotation(Quaternion.identity())
                 .type(ZoneType.OUTBOUND)
@@ -108,7 +112,7 @@ public class DataInitializer implements CommandLineRunner {
         // 좌벽
         wallRepository.save(Wall.builder()
                 .description("Left Wall")
-                .position(new Position(START_X + -WALL_TOP_BOTTOM_WIDTH / 2, START_Y + WALL_HEIGHT / 2, 0))
+                .position(new Position(START_X + -WALL_TOP_BOTTOM_WIDTH / 2, START_Y + WALL_HEIGHT / 2, START_Z))
                 .size(new Size(WALL_THICKNESS, WALL_HEIGHT, WALL_SIDE_WIDTH + 20))
                 .rotation(Quaternion.identity())
                 .warehouse(warehouse)
@@ -117,7 +121,7 @@ public class DataInitializer implements CommandLineRunner {
         // 우벽
         wallRepository.save(Wall.builder()
                 .description("Right Wall")
-                .position(new Position(START_X + WALL_TOP_BOTTOM_WIDTH / 2, START_Y + WALL_HEIGHT / 2, 0))
+                .position(new Position(START_X + WALL_TOP_BOTTOM_WIDTH / 2, START_Y + WALL_HEIGHT / 2, START_Z))
                 .size(new Size(WALL_THICKNESS, WALL_HEIGHT, WALL_SIDE_WIDTH + 20))
                 .rotation(Quaternion.identity())
                 .warehouse(warehouse)
@@ -144,7 +148,7 @@ public class DataInitializer implements CommandLineRunner {
         // 바닥
         wallRepository.save(Wall.builder()
                 .description("Floor")
-                .position(new Position(START_X, START_Y + -1, 0))
+                .position(new Position(START_X, START_Y + -1, START_Z))
                 .size(new Size(WALL_TOP_BOTTOM_WIDTH, FLOOR_THICKNESS, WALL_SIDE_WIDTH))
                 .rotation(Quaternion.identity())
                         .color(Color.FLOOR_LIGHT)
@@ -160,6 +164,53 @@ public class DataInitializer implements CommandLineRunner {
 //                .color(Color.INSIDE_WALL_GRAY)
 //                .warehouse(warehouse)
 //                .build());
+
+        // Zone 참조 가져오기
+        Zone inboundStorageZone = zoneRepository.findByName("입고 보관 구역")
+                .orElseThrow(() -> new IllegalStateException("입고 보관 구역을 찾을 수 없습니다."));
+        Zone outboundStorageZone = zoneRepository.findByName("출고 보관 구역")
+                .orElseThrow(() -> new IllegalStateException("출고 보관 구역을 찾을 수 없습니다."));
+
+        int BOX_WIDTH = 50;
+        // 입고 보관 구역에 랙 추가
+        int inboundRackIndex = 0;
+        for (int i = 0; i < 11; i++) {
+            if ((i + 1) % 3 == 0) continue;
+            for (int j = 0; j < 2; j++) {
+                int x = j * 150;
+                int z = i * 60;
+                rackRepository.save(Rack.builder()
+                        .name("INBOUND-RACK-" + inboundRackIndex)
+                        .description("입고 보관용 랙 " + inboundRackIndex)
+                        .position(new Position(START_X - 325 + x, START_Y, START_Z - 300 + z))
+                        .size(new Size(140, 50, 50))
+                        .rotation(Quaternion.identity())
+                        .zone(inboundStorageZone)
+                        .warehouse(warehouse)
+                        .build());
+                inboundRackIndex++;
+            }
+        }
+
+        // 출고 보관 구역에 랙 추가
+        int outboundRackIndex = 0;
+        for (int i = 0; i < 11; i++) {
+            if ((i + 1) % 3 == 0) continue;
+            for (int j = 0; j < 2; j++) {
+                int x = j * 150;
+                int z = i * 60;
+                rackRepository.save(Rack.builder()
+                        .name("OUTBOUND-RACK-" + outboundRackIndex)
+                        .description("출고 보관용 랙 " + outboundRackIndex)
+                        .position(new Position(START_X + 175 + x, START_Y, START_Z - 300 + z))
+                        .size(new Size(140, 50, 50))
+                        .rotation(Quaternion.identity())
+                        .zone(outboundStorageZone)
+                        .warehouse(warehouse)
+                        .build());
+                outboundRackIndex++;
+            }
+        }
 
     }
 }

@@ -1,9 +1,11 @@
 package com.minseojo.smartwarehouse.rack.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,6 +49,12 @@ public class Rack extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id")
     private Zone zone; // 단방향만 설정
+
+    // Write 용 단방향
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id")
+    @JsonBackReference // 혹은 DTO에서 무시
+    private Warehouse warehouse;
 
     public void update(String name, String description,
                        Position position, Size size, Quaternion rotation,

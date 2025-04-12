@@ -3,6 +3,7 @@ package com.minseojo.smartwarehouse.warehouse.dto;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.rack.dto.RackResponse;
 import com.minseojo.smartwarehouse.wall.dto.WallResponse;
 import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;
@@ -20,8 +21,9 @@ public class WarehouseAggregateResponse {
     private Size size;
     private Quaternion rotation;
 
-    private List<ZoneResponse> zones;
     private List<WallResponse> walls;
+    private List<ZoneResponse> zones;
+    private List<RackResponse> racks;
 
     public static WarehouseAggregateResponse from(Warehouse warehouse) {
         return new WarehouseAggregateResponse(
@@ -30,8 +32,9 @@ public class WarehouseAggregateResponse {
                 warehouse.getPosition(),
                 warehouse.getSize(),
                 warehouse.getRotation(),
+                warehouse.getWalls().stream().map(WallResponse::from).toList(),
                 warehouse.getZones().stream().map(ZoneResponse::from).toList(),
-                warehouse.getWalls().stream().map(WallResponse::from).toList()
+                warehouse.getRacks().stream().map(RackResponse::from).toList()
         );
     }
 }

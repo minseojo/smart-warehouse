@@ -15,8 +15,9 @@ export function fetchWarehouseData(scene) {
 }
 
 export function drawWarehouse(scene, warehouse) {
-    const { position, size, rotation, zones, walls } = warehouse;
+    const { position, size, rotation, zones, racks, walls } = warehouse;
     walls.forEach(wall => drawWall(scene, wall));
+    racks.forEach(rack => drawRack(scene, rack));
     zones.forEach(zone => drawZone(scene, zone));
 }
 
@@ -76,4 +77,35 @@ export function drawZone(scene, zone) {
     const label = new CSS2DObject(labelDiv);
     label.position.set(0, 0, 0);
     plane.add(label);
+}
+
+export function drawRack(scene, rack) {
+    const { position, size, rotation, name } = rack;
+
+    const material = new THREE.MeshStandardMaterial({
+        color: 0x8B4513, // 갈색 계열로 목재 느낌
+        roughness: 0.6,
+        metalness: 0.2
+    });
+
+    const geometry = new THREE.BoxGeometry(size.width, size.height, size.depth);
+    const rackMesh = new THREE.Mesh(geometry, material);
+
+    rackMesh.position.set(position.x, position.y, position.z);
+    rackMesh.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+    scene.add(rackMesh);
+
+    // ====== Label ======
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'label';
+    labelDiv.textContent = name;
+    labelDiv.style.color = 'white';
+    labelDiv.style.fontSize = '10px';
+    labelDiv.style.background = 'rgba(0,0,0,0.6)';
+    labelDiv.style.padding = '1px 3px';
+    labelDiv.style.borderRadius = '3px';
+
+    const label = new CSS2DObject(labelDiv);
+    label.position.set(0, size.height / 2 + 5, 0); // 랙 위에 띄우기
+    rackMesh.add(label);
 }
