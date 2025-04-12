@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.task;
 
-import com.minseojo.smartwarehouse.task.domain.Task;
+import com.minseojo.smartwarehouse.task.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

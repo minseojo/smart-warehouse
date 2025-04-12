@@ -1,8 +1,8 @@
 package com.minseojo.smartwarehouse.zone;
 
 import com.minseojo.smartwarehouse.warehouse.WarehouseRepository;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import com.minseojo.smartwarehouse.zone.dto.CreateZoneRequest;
 import com.minseojo.smartwarehouse.zone.dto.UpdateZoneRequest;
 import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;

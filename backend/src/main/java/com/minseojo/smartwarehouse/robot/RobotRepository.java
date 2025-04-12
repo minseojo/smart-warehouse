@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.robot;
 
-import com.minseojo.smartwarehouse.robot.domain.Robot;
+import com.minseojo.smartwarehouse.robot.entity.Robot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

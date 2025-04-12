@@ -1,4 +1,4 @@
-package com.minseojo.smartwarehouse.robot.domain;
+package com.minseojo.smartwarehouse.robot.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.rack;
 
-import com.minseojo.smartwarehouse.rack.domain.Rack;
+import com.minseojo.smartwarehouse.rack.entity.Rack;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

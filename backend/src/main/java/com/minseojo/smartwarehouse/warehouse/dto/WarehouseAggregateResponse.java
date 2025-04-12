@@ -4,7 +4,7 @@ import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
 import com.minseojo.smartwarehouse.wall.dto.WallResponse;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

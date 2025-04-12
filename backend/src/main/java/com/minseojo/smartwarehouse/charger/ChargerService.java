@@ -1,11 +1,11 @@
 package com.minseojo.smartwarehouse.charger;
 
-import com.minseojo.smartwarehouse.charger.domain.Charger;
+import com.minseojo.smartwarehouse.charger.entity.Charger;
 import com.minseojo.smartwarehouse.charger.dto.ChargerResponse;
 import com.minseojo.smartwarehouse.charger.dto.CreateChargerRequest;
 import com.minseojo.smartwarehouse.zone.ZoneRepository;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
-import com.minseojo.smartwarehouse.zone.domain.ZoneType;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
+import com.minseojo.smartwarehouse.zone.entity.ZoneType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

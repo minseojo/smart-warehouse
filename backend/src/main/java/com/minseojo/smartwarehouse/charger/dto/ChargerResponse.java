@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.charger.dto;
 
-import com.minseojo.smartwarehouse.charger.domain.Charger;
+import com.minseojo.smartwarehouse.charger.entity.Charger;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;

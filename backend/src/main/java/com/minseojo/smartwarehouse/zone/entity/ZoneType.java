@@ -1,4 +1,4 @@
-package com.minseojo.smartwarehouse.zone.domain;
+package com.minseojo.smartwarehouse.zone.entity;
 
 public enum ZoneType {
     INBOUND,     // 입고

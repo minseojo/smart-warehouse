@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.task.dto;
 
-import com.minseojo.smartwarehouse.task.domain.Task;
+import com.minseojo.smartwarehouse.task.entity.Task;
 import lombok.Builder;
 import lombok.Getter;
 

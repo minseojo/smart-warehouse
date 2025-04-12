@@ -3,7 +3,7 @@ package com.minseojo.smartwarehouse.wall.dto;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.wall.domain.Wall;
+import com.minseojo.smartwarehouse.wall.entity.Wall;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

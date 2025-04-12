@@ -1,25 +1,25 @@
-package com.minseojo.smartwarehouse.wall.domain;
+package com.minseojo.smartwarehouse.charger.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.minseojo.smartwarehouse.common.vo.Color;
+import com.minseojo.smartwarehouse.common.vo.LocatedObject;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
-@Getter
-public class Wall {
+public class Charger implements LocatedObject {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
+    private String name;
 
     @Embedded
     @AttributeOverrides({
@@ -41,22 +41,9 @@ public class Wall {
     })
     private Quaternion rotation;
 
-    @Enumerated(EnumType.STRING)
-    @Builder.Default // 기본 컬러 설정
-    private Color color = Color.OUTER_WALL_GRAY;
-
-    // Write 용 단방향
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id")
-    @JsonBackReference // 혹은 DTO에서 무시
-    private Warehouse warehouse;
-
-    public void update(String description, Position position, Size size, Quaternion rotation, Color color) {
-        this.description = description;
-        this.position = position;
-        this.size = size;
-        this.rotation = rotation;
-        this.color = color;
-    }
+    @JoinColumn(name = "zone_id")
+    private Zone zone; // 단방향만 설정
 
 }

@@ -1,6 +1,6 @@
-package com.minseojo.smartwarehouse.task.domain;
+package com.minseojo.smartwarehouse.task.entity;
 
-import com.minseojo.smartwarehouse.zone.domain.Zone;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -3,7 +3,7 @@ package com.minseojo.smartwarehouse.warehouse;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import com.minseojo.smartwarehouse.warehouse.dto.CreateWarehouseRequest;
 import com.minseojo.smartwarehouse.warehouse.dto.UpdateWarehouseRequest;
 import com.minseojo.smartwarehouse.warehouse.dto.WarehouseAggregateResponse;

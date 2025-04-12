@@ -1,25 +1,19 @@
-package com.minseojo.smartwarehouse.warehouse.domain;
+package com.minseojo.smartwarehouse.rack.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
-import com.minseojo.smartwarehouse.common.vo.LocatedObject;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.wall.domain.Wall;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Getter
-public class Warehouse extends BaseTimeEntity implements LocatedObject {
+public class Rack extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,22 +43,19 @@ public class Warehouse extends BaseTimeEntity implements LocatedObject {
     })
     private Quaternion rotation;
 
-    // === Read 전용 양방향 ===
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
-    @JsonManagedReference // 또는 DTO에서만 쓰기
-    private List<Zone> zones = new ArrayList<>();
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_id")
+    private Zone zone; // 단방향만 설정
 
-    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<Wall> walls = new ArrayList<>();
-
-    public void update(String name, String description, Position position,
-                       Quaternion rotation, Size size) {
+    public void update(String name, String description,
+                       Position position, Size size, Quaternion rotation,
+                       Zone zone) {
         this.name = name;
         this.description = description;
         this.position = position;
         this.size = size;
         this.rotation = rotation;
+        this.zone = zone;
     }
-
 }

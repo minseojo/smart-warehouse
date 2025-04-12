@@ -1,11 +1,11 @@
 package com.minseojo.smartwarehouse.rack;
 
-import com.minseojo.smartwarehouse.rack.domain.Rack;
+import com.minseojo.smartwarehouse.rack.entity.Rack;
 import com.minseojo.smartwarehouse.rack.dto.CreateRackRequest;
 import com.minseojo.smartwarehouse.rack.dto.RackResponse;
 import com.minseojo.smartwarehouse.rack.dto.UpdateRackRequest;
 import com.minseojo.smartwarehouse.zone.ZoneRepository;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

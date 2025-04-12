@@ -1,10 +1,11 @@
-package com.minseojo.smartwarehouse.rack.domain;
+package com.minseojo.smartwarehouse.wall.entity;
 
-import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.minseojo.smartwarehouse.common.vo.Color;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.zone.domain.Zone;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,13 +14,10 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Getter
-public class Rack extends BaseTimeEntity {
-
+public class Wall {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
 
     private String description;
 
@@ -43,19 +41,22 @@ public class Rack extends BaseTimeEntity {
     })
     private Quaternion rotation;
 
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_id")
-    private Zone zone; // 단방향만 설정
+    @Enumerated(EnumType.STRING)
+    @Builder.Default // 기본 컬러 설정
+    private Color color = Color.OUTER_WALL_GRAY;
 
-    public void update(String name, String description,
-                       Position position, Size size, Quaternion rotation,
-                       Zone zone) {
-        this.name = name;
+    // Write 용 단방향
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id")
+    @JsonBackReference // 혹은 DTO에서 무시
+    private Warehouse warehouse;
+
+    public void update(String description, Position position, Size size, Quaternion rotation, Color color) {
         this.description = description;
         this.position = position;
         this.size = size;
         this.rotation = rotation;
-        this.zone = zone;
+        this.color = color;
     }
+
 }

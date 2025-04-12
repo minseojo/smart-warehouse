@@ -1,4 +1,4 @@
-package com.minseojo.smartwarehouse.robot.domain;
+package com.minseojo.smartwarehouse.robot.entity;
 
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
 import com.minseojo.smartwarehouse.common.vo.OBB;

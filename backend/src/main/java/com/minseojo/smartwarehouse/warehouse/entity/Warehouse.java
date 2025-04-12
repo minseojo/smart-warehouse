@@ -1,24 +1,32 @@
-package com.minseojo.smartwarehouse.zone.domain;
+package com.minseojo.smartwarehouse.warehouse.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
-import com.minseojo.smartwarehouse.common.vo.*;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
+import com.minseojo.smartwarehouse.common.vo.LocatedObject;
+import com.minseojo.smartwarehouse.common.vo.Position;
+import com.minseojo.smartwarehouse.common.vo.Quaternion;
+import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.wall.entity.Wall;
+import com.minseojo.smartwarehouse.zone.entity.Zone;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Getter
-public class Zone extends BaseTimeEntity implements LocatedObject {
+public class Warehouse extends BaseTimeEntity implements LocatedObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
     private String description;
 
     @Embedded
@@ -41,36 +49,22 @@ public class Zone extends BaseTimeEntity implements LocatedObject {
     })
     private Quaternion rotation;
 
-    @Enumerated(EnumType.STRING)
-    private ZoneType type;
+    // === Read 전용 양방향 ===
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @JsonManagedReference // 또는 DTO에서만 쓰기
+    private List<Zone> zones = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Color color = Color.RED; // 기본 컬러 설정
+    @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Wall> walls = new ArrayList<>();
 
-    // Write 용 단방향
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id")
-    @JsonBackReference // 혹은 DTO에서 무시
-    private Warehouse warehouse;
-
-    public void update(
-            String name,
-            String description,
-            Position position,
-            Size size,
-            Quaternion rotation,
-            ZoneType type,
-            Color color,
-            Warehouse warehouse
-    ) {
+    public void update(String name, String description, Position position,
+                       Quaternion rotation, Size size) {
         this.name = name;
         this.description = description;
         this.position = position;
         this.size = size;
         this.rotation = rotation;
-        this.type = type;
-        this.color = color;
-        this.warehouse = warehouse;
     }
+
 }

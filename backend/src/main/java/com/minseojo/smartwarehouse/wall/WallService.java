@@ -1,11 +1,11 @@
 package com.minseojo.smartwarehouse.wall;
 
-import com.minseojo.smartwarehouse.wall.domain.Wall;
+import com.minseojo.smartwarehouse.wall.entity.Wall;
 import com.minseojo.smartwarehouse.wall.dto.CreateWallRequest;
 import com.minseojo.smartwarehouse.wall.dto.UpdateWallRequest;
 import com.minseojo.smartwarehouse.wall.dto.WallResponse;
 import com.minseojo.smartwarehouse.warehouse.WarehouseRepository;
-import com.minseojo.smartwarehouse.warehouse.domain.Warehouse;
+import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

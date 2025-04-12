@@ -1,6 +1,6 @@
 package com.minseojo.smartwarehouse.charger;
 
-import com.minseojo.smartwarehouse.charger.domain.Charger;
+import com.minseojo.smartwarehouse.charger.entity.Charger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
