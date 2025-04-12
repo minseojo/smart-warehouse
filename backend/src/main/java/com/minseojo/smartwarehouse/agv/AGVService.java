@@ -11,6 +11,7 @@ import com.minseojo.smartwarehouse.agv.dto.CreateAGVRequest;
 import com.minseojo.smartwarehouse.agv.dto.AGVResponse;
 import com.minseojo.smartwarehouse.agv.dto.UpdateAGVRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +20,30 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AGVService {
 
-    private final AGVRepository AGVRepository;
+    private final AGVRepository agvRepository;
+    private final AGVManager agvManager;
 
     @Transactional(readOnly = true)
     public AGV getByIdOrThrow(Long id) {
-        return AGVRepository.findById(id)
+        return agvRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Robot not found: " + id));
     }
 
     @Transactional(readOnly = true)
     public List<AGVResponse> getAGVsByWarehouse(Long warehouseId) {
-        return AGVRepository.findByWarehouseId(warehouseId)
+        return agvRepository.findByWarehouseId(warehouseId)
                 .stream()
+                .map(AGVResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AGVResponse> getAGVsByWarehouseFromAGVManger(Long warehouseId) {
+        return agvManager.getAll().stream()
+                .filter(agv -> agv.getWarehouseId().equals(warehouseId))
                 .map(AGVResponse::from)
                 .toList();
     }
@@ -52,7 +63,7 @@ public class AGVService {
                 .warehouseId(dto.getWarehouseId())  // FK 설정
                 .build();
 
-        AGV savedAGV = AGVRepository.save(agv);
+        AGV savedAGV = agvRepository.save(agv);
 
         return AGVResponse.from(savedAGV);
     }
@@ -83,7 +94,7 @@ public class AGVService {
 
     // 로봇 삭제
     public void deleteAGV(Long id) {
-        AGVRepository.delete(getByIdOrThrow(id));
+        agvRepository.delete(getByIdOrThrow(id));
     }
 
 }

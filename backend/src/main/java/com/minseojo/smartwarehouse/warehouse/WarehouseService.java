@@ -1,13 +1,15 @@
 package com.minseojo.smartwarehouse.warehouse;
 
+import com.minseojo.smartwarehouse.agv.AGVService;
+import com.minseojo.smartwarehouse.agv.dto.AGVResponse;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.rack.dto.RackResponse;
+import com.minseojo.smartwarehouse.wall.dto.WallResponse;
+import com.minseojo.smartwarehouse.warehouse.dto.*;
 import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
-import com.minseojo.smartwarehouse.warehouse.dto.CreateWarehouseRequest;
-import com.minseojo.smartwarehouse.warehouse.dto.UpdateWarehouseRequest;
-import com.minseojo.smartwarehouse.warehouse.dto.WarehouseAggregateResponse;
-import com.minseojo.smartwarehouse.warehouse.dto.WarehouseResponse;
+import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.List;
 public class WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
+    private final AGVService agvService;
 
     @Transactional(readOnly = true)
     public Warehouse getByIdOrThrow(Long id) {
@@ -28,9 +31,9 @@ public class WarehouseService {
     }
 
     @Transactional(readOnly = true)
-    public WarehouseAggregateResponse getById(Long id) {
+    public WarehouseStructureResponse getById(Long id) {
         Warehouse warehouse = getByIdOrThrow(id);
-        return WarehouseAggregateResponse.from(warehouse);
+        return WarehouseStructureResponse.from(warehouse);
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +71,32 @@ public class WarehouseService {
 
         return WarehouseResponse.from(warehouse);
     }
+
+    public WarehouseStructureResponse getStructure(Long id) {
+        Warehouse warehouse = warehouseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("창고 없음"));
+
+        return new WarehouseStructureResponse(
+                warehouse.getName(),
+                warehouse.getDescription(),
+                warehouse.getPosition(),
+                warehouse.getSize(),
+                warehouse.getRotation(),
+                warehouse.getWalls().stream().map(WallResponse::from).toList(),
+                warehouse.getZones().stream().map(ZoneResponse::from).toList()
+        );
+    }
+
+    public WarehouseStateResponse getState(Long id) {
+        Warehouse warehouse = warehouseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("창고 없음"));
+
+        return new WarehouseStateResponse(
+                warehouse.getRacks().stream().map(RackResponse::from).toList(),
+                agvService.getAGVsByWarehouseFromAGVManger(id)
+        );
+    }
+
 
 
     public void delete(Long id) {

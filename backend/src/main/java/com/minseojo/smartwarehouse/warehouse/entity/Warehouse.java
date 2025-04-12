@@ -1,6 +1,7 @@
 package com.minseojo.smartwarehouse.warehouse.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.minseojo.smartwarehouse.agv.entity.AGV;
 import com.minseojo.smartwarehouse.common.entity.BaseTimeEntity;
 import com.minseojo.smartwarehouse.common.vo.LocatedObject;
 import com.minseojo.smartwarehouse.common.vo.Position;
@@ -62,6 +63,11 @@ public class Warehouse extends BaseTimeEntity implements LocatedObject {
     @OneToMany(mappedBy = "warehouse", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Rack> racks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "warehouseId", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<AGV> agvs = new ArrayList<>();
+
 
     public void update(String name, String description, Position position,
                        Quaternion rotation, Size size) {

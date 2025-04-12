@@ -3,7 +3,6 @@ package com.minseojo.smartwarehouse.warehouse.dto;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
-import com.minseojo.smartwarehouse.rack.dto.RackResponse;
 import com.minseojo.smartwarehouse.wall.dto.WallResponse;
 import com.minseojo.smartwarehouse.warehouse.entity.Warehouse;
 import com.minseojo.smartwarehouse.zone.dto.ZoneResponse;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class WarehouseAggregateResponse {
+public class WarehouseStructureResponse {
     private String name;
     private String description;
     private Position position;
@@ -23,18 +22,16 @@ public class WarehouseAggregateResponse {
 
     private List<WallResponse> walls;
     private List<ZoneResponse> zones;
-    private List<RackResponse> racks;
 
-    public static WarehouseAggregateResponse from(Warehouse warehouse) {
-        return new WarehouseAggregateResponse(
-                warehouse.getName(),
-                warehouse.getDescription(),
-                warehouse.getPosition(),
-                warehouse.getSize(),
-                warehouse.getRotation(),
-                warehouse.getWalls().stream().map(WallResponse::from).toList(),
-                warehouse.getZones().stream().map(ZoneResponse::from).toList(),
-                warehouse.getRacks().stream().map(RackResponse::from).toList()
+    public static WarehouseStructureResponse from(Warehouse warehouse) {
+        return new WarehouseStructureResponse(
+            warehouse.getName(),
+            warehouse.getDescription(),
+            warehouse.getPosition(),
+            warehouse.getSize(),
+            warehouse.getRotation(),
+            warehouse.getWalls().stream().map(WallResponse::from).toList(),
+            warehouse.getZones().stream().map(ZoneResponse::from).toList()
         );
     }
 }

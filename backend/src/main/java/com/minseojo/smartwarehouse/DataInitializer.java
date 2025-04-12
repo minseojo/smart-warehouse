@@ -1,9 +1,15 @@
 package com.minseojo.smartwarehouse;
 
+import com.minseojo.smartwarehouse.agv.AGVManager;
+import com.minseojo.smartwarehouse.agv.AGVRepository;
+import com.minseojo.smartwarehouse.agv.entity.AGV;
+import com.minseojo.smartwarehouse.agv.entity.AGVMode;
+import com.minseojo.smartwarehouse.agv.entity.AGVStatus;
 import com.minseojo.smartwarehouse.common.vo.Color;
 import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
+import com.minseojo.smartwarehouse.device.DeviceType;
 import com.minseojo.smartwarehouse.rack.RackRepository;
 import com.minseojo.smartwarehouse.rack.entity.Rack;
 import com.minseojo.smartwarehouse.wall.WallRepository;
@@ -25,6 +31,9 @@ public class DataInitializer implements CommandLineRunner {
     private final ZoneRepository zoneRepository;
     private final WallRepository wallRepository;
     private final RackRepository rackRepository;
+
+    private final AGVRepository agvRepository;
+    private final AGVManager agvManager;
 
     @Override
     public void run(String... args) throws Exception {
@@ -147,7 +156,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // 바닥
         wallRepository.save(Wall.builder()
-                .description("Floor")
+                .description("")
                 .position(new Position(START_X, START_Y + -1, START_Z))
                 .size(new Size(WALL_TOP_BOTTOM_WIDTH, FLOOR_THICKNESS, WALL_SIDE_WIDTH))
                 .rotation(Quaternion.identity())
@@ -211,6 +220,48 @@ public class DataInitializer implements CommandLineRunner {
                 outboundRackIndex++;
             }
         }
+
+        // AGV 3대 추가 (입고구역 근처)
+        agvRepository.save(AGV.builder()
+                .name("AGV-1")
+                .position(new Position(START_X - 550, START_Y, START_Z - 100))
+                .rotation(Quaternion.identity())
+                .size(new Size(50, 50, 50))
+                .speed(10)
+                .batteryPercentage(100.0)
+                .status(AGVStatus.IDLE)
+                .mode(AGVMode.NORMAL)
+                .deviceType(DeviceType.AGV)
+                .warehouseId(warehouse.getId())
+                .build());
+
+        agvRepository.save(AGV.builder()
+                .name("AGV-2")
+                .position(new Position(START_X - 550, START_Y, START_Z))
+                .rotation(Quaternion.identity())
+                .size(new Size(50, 50, 50))
+                .speed(10)
+                .batteryPercentage(100.0)
+                .status(AGVStatus.IDLE)
+                .mode(AGVMode.NORMAL)
+                .deviceType(DeviceType.AGV)
+                .warehouseId(warehouse.getId())
+                .build());
+
+        agvRepository.save(AGV.builder()
+                .name("AGV-3")
+                .position(new Position(START_X - 550, START_Y, START_Z + 100))
+                .rotation(Quaternion.identity())
+                .size(new Size(50, 50, 50))
+                .speed(10)
+                .batteryPercentage(100.0)
+                .status(AGVStatus.IDLE)
+                .mode(AGVMode.NORMAL)
+                .deviceType(DeviceType.AGV)
+                .warehouseId(warehouse.getId())
+                .build());
+
+        agvRepository.findAll().forEach(agvManager::register);
 
     }
 }

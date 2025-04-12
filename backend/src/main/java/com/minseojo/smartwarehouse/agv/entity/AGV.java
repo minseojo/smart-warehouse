@@ -7,14 +7,20 @@ import com.minseojo.smartwarehouse.common.vo.Position;
 import com.minseojo.smartwarehouse.common.vo.Quaternion;
 import com.minseojo.smartwarehouse.common.vo.Size;
 import com.minseojo.smartwarehouse.device.DeviceType;
+import com.minseojo.smartwarehouse.task.entity.Task;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @Getter
+@Slf4j
 public class AGV extends BaseTimeEntity implements RobotInterface {
 
     @Id
@@ -61,12 +67,56 @@ public class AGV extends BaseTimeEntity implements RobotInterface {
     @Transient // DB 저장 X
     private OBB obb;
 
-    // 생성 시 자동 OBB 설정
-    @PostLoad
-    @PostPersist
-    @PostUpdate
-    private void initOBB() {
-        this.obb = OBB.from(position, rotation, size);
+    @Transient
+    private Queue<Task> taskQueue = new LinkedList<>();
+
+    public void assignTask(Task task) {
+        this.taskQueue.add(task);
+        this.status = AGVStatus.WORKING;
+    }
+
+    public void processNextTask() {
+        if (taskQueue.isEmpty()) {
+            this.status = AGVStatus.IDLE;
+            return;
+        }
+
+        Task task = taskQueue.peek();
+        
+        // 현재 위치와 목적지 위치의 거리 계산
+        double distance = position.distanceTo(task.getDestination());
+        log.info("distance: {}", distance);
+        // 목적지에 도달하지 않았으면 이동
+        if (distance > 0.1) { // 0.1 단위 이상 차이나면 이동
+            // 목적지 방향으로 이동
+            double dx = task.getDestination().getX() - position.getX();
+            double dy = task.getDestination().getY() - position.getY();
+            double dz = task.getDestination().getZ() - position.getZ();
+            
+            // 정규화된 방향 벡터 계산
+            double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            dx /= length;
+            dy /= length;
+            dz /= length;
+
+            // 속도에 따라 이동
+            Position newPosition = new Position(
+                position.getX() + dx * speed,
+                position.getY() + dy * speed,
+                position.getZ() + dz * speed
+            );
+            
+            this.move(newPosition);
+            this.status = AGVStatus.MOVING;
+            return;
+        }
+
+        // 도착했으면 작업 완료
+        taskQueue.poll();
+        if (taskQueue.isEmpty()) {
+            this.status = AGVStatus.IDLE;
+        }
+
     }
 
     // 위치 이동
@@ -108,6 +158,10 @@ public class AGV extends BaseTimeEntity implements RobotInterface {
         this.size = size;
         this.status = status;
         this.mode = mode;
+    }
+
+    public void updateStatus(AGVStatus status) {
+        this.status = status;
     }
 
 }

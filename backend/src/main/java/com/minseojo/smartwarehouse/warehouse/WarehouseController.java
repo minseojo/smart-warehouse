@@ -1,9 +1,6 @@
 package com.minseojo.smartwarehouse.warehouse;
 
-import com.minseojo.smartwarehouse.warehouse.dto.CreateWarehouseRequest;
-import com.minseojo.smartwarehouse.warehouse.dto.UpdateWarehouseRequest;
-import com.minseojo.smartwarehouse.warehouse.dto.WarehouseAggregateResponse;
-import com.minseojo.smartwarehouse.warehouse.dto.WarehouseResponse;
+import com.minseojo.smartwarehouse.warehouse.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +20,7 @@ public class WarehouseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WarehouseAggregateResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<WarehouseStructureResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(warehouseService.getById(id));
     }
 
@@ -41,4 +38,15 @@ public class WarehouseController {
     public void delete(@PathVariable Long id) {
         warehouseService.delete(id);
     }
+
+    @GetMapping("/{id}/structure")
+    public ResponseEntity<WarehouseStructureResponse> getStructure(@PathVariable Long id) {
+        return ResponseEntity.ok(warehouseService.getStructure(id));
+    }
+
+    @GetMapping("/{id}/state")
+    public ResponseEntity<WarehouseStateResponse> getState(@PathVariable Long id) {
+        return ResponseEntity.ok(warehouseService.getState(id));
+    }
+
 }
