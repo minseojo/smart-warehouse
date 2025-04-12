@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
@@ -31,5 +33,18 @@ public class Quaternion {
 
     public Vector3[] toLocalAxis() {
         return RotationMatrixUtils.getLocalAxes(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Quaternion that = (Quaternion) o;
+        return Double.compare(x, that.x) == 0 && Double.compare(y, that.y) == 0 && Double.compare(z, that.z) == 0 && Double.compare(w, that.w) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z, w);
     }
 }

@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
@@ -66,5 +68,18 @@ public class OBB {
         return obb.halfWidth * Math.abs(axis.dot(obb.axisX)) +
                 obb.halfHeight * Math.abs(axis.dot(obb.axisY)) +
                 obb.halfDepth * Math.abs(axis.dot(obb.axisZ));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OBB obb = (OBB) o;
+        return Double.compare(halfWidth, obb.halfWidth) == 0 && Double.compare(halfHeight, obb.halfHeight) == 0 && Double.compare(halfDepth, obb.halfDepth) == 0 && Objects.equals(center, obb.center) && Objects.equals(axisX, obb.axisX) && Objects.equals(axisY, obb.axisY) && Objects.equals(axisZ, obb.axisZ);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(center, axisX, axisY, axisZ, halfWidth, halfHeight, halfDepth);
     }
 }
