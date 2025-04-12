@@ -6,36 +6,24 @@
     <link rel="stylesheet" href="src/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>스마트 물류창고</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+      }
+
+      canvas, .label {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
   <body>
     <canvas id="canvas"></canvas>
     <script type="module" src="src/main.js"></script>
-
-<!--    <div id="simulator-ui">-->
-
-<!--      &lt;!&ndash; 로봇 리스트 &ndash;&gt;-->
-<!--      <div id="robot-list">-->
-<!--        <h3>Robot List</h3>-->
-<!--        <ul id="robot-items"></ul>-->
-<!--      </div>-->
-
-<!--      &lt;!&ndash; 로봇 상세 정보 &ndash;&gt;-->
-<!--      <div id="robot-info">-->
-<!--        <h3>Robot Info</h3>-->
-<!--        <div>ID: <span id="robot-id">-</span></div>-->
-<!--        <div>State: <span id="robot-state">-</span></div>-->
-<!--        <div>Speed: <input type="range" id="robot-speed" min="0.1" max="3" step="0.1"></div>-->
-<!--        <button id="charge-btn">Request Charging (Add to Queue)</button>-->
-<!--        <button id="pause-btn">Pause / Resume</button>-->
-<!--      </div>-->
-
-<!--      &lt;!&ndash; 로봇 대기 큐 &ndash;&gt;-->
-<!--      <div id="robot-queue">-->
-<!--        <h3>Charging Queue</h3>-->
-<!--        <ul id="queue-items"></ul>-->
-<!--      </div>-->
-
-<!--    </div>-->
-
   </body>
 </html>
