@@ -7,7 +7,7 @@ import { initializeWarehouseScene, fetchWarehouseState } from './smartWarehouseR
 const scene = new THREE.Scene();
 
 // === CAMERA ===
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
 camera.position.set(0, 560, 0);
 camera.lookAt(0, 0, 0);
 
